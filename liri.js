@@ -6,23 +6,23 @@ var fs = require('fs');
 var moment = require('moment');
 var spotify = new Spotify(keys.spotify);
 
-var appCommand = process.argv[2];
-var userSearch = process.argv.slice(3).join(" ");
+var command = process.argv[2];
+var userInput = process.argv.slice(3).join(" ");
 
-function liriRun(appCommand,userSearch){
-    switch(appCommand){
+function liri(command,userInput){
+    switch(command){
         case "concert-this":
-            getBandsInTown(userSearch);
+            getBands(userInput);
             break;
         case "spotify-this-song":
-            getSpotify(userSearch);
+            getSpotify(userInput);
             break;
         
         case "movie-this":
-            getOMDB(userSearch);
+            getOMDB(userInput);
             break;
         case "do-what-it-says":
-            getRandom(userSearch);
+            getRandom(userInput);
             break;
     }
 }
@@ -58,15 +58,15 @@ function getSpotify(songName){
 
     });
 };
-liriRun(appCommand,userSearch);
+liri(command,userInput);
 // creating function for bands
-function getBandsInTown(singer){
-    var singer = userSearch;
+function getBands(singer){
+    var singer = userInput;
     var singerQueryURL= "https://rest.bandsintown.com/artists/" + singer + "/events?app_id=codingbootcamp";
 axios.get(singerQueryURL).then(
     function(response){
         //line breaker in between the bands
-        console.log("====================")
+        console.log("====================");
         //console.log the name of the venue
         console.log("name of the venue: " + response.data[0].venue.name + "\r\n");
         //console.log  venue location
@@ -82,4 +82,41 @@ axios.get(singerQueryURL).then(
 
         });
     })
+}
+
+function getOMDB(movie){
+    if(!movie){
+        movie ="Mr. Nobody,";
+    }
+    var movieQueryURL="http://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+    axios.request(movieQueryURL).then( function(response){
+         //line breaker in between the bands
+         console.log("====================");
+         console.log("Title of the movie: "+ response.data.Title + "\r\n");
+         console.log("years of the movie: " + response.data.Year+ "\r\n");
+         console.log("IMDB Rating: " + response.data.imdbRating + "\r\n");
+         console.log("Rotten Tomatos Rating: " + response.data.Ratings[1].Value + "\r\n");
+         console.log("country of the movie: " + response.data.Country + "\r\n");
+         console.log( "language:" + response.data.Language + "r\n");
+         console.log("plot of the movie: " + response.data.Plot + "\r\n");
+         console.log("Actor: " + response.data.Actors + "\r\n");
+
+        var movieslist= "========='the movie list'=====" + "\r\n" +"movieName:"+ response.data.Title + "\r\n" +
+         "years of the movie: " + response.data.Year+ "\r\n" + "IMDB Rating: " + response.data.imdbRating + "\r\n" +
+         "Rotten Tomatoes Rating: " + response.data.Ratings[1].Value + "\r\n" +
+         "Country of the movie: " + response.data.Country +"\r\n" + "language:" + response.data.Language + 
+         "\r\n"+ "plot of the movie: " + response.data.Plot + "\r\n" + "Actor: " + response.data.Actors + "\r\n";
+
+         fs.appendFile("log.txt", movieslist, function(err){
+            if(err){
+                console.log(err);
+            } 
+
+        });
+    } );
+}
+
+function getRandom(){ 
+    
+
 }
