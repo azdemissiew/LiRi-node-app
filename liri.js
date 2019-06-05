@@ -117,6 +117,17 @@ function getOMDB(movie){
 }
 
 function getRandom(){ 
-    
-
+    fs.readFile("random.txt",'utf8',function(err, data){
+        if(err){
+            console.log(err);
+                    }else {console.log(data)};
+ 
+    var dataArr = data.split(",");
+    liri(dataArr[0],dataArr[1]);
+ 
+ });
+ 
 }
+
+
+   
